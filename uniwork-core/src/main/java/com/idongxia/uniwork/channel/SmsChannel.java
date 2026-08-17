@@ -1,5 +1,5 @@
 package com.idongxia.uniwork.channel;
 
-/** SMS delivery channel. */
+/** 短信发送渠道。SMS delivery channel. */
 public interface SmsChannel extends UniWorkChannel {
 }

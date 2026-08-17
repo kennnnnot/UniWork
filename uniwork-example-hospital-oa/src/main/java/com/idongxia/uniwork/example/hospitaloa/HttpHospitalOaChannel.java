@@ -12,8 +12,8 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Example protocol: POST a JSON message to a hospital-owned OA endpoint.
- * A real adapter can replace the headers and payload without changing callers.
+ * 示例协议：向医院自有 OA 地址 POST JSON 消息；真实项目可以替换请求头和报文，而不改变业务调用。
+ * Example protocol that posts JSON to a hospital OA endpoint; real adapters can replace headers and payloads.
  */
 final class HttpHospitalOaChannel implements HospitalOaChannel {
 
@@ -158,7 +158,7 @@ final class HttpHospitalOaChannel implements HospitalOaChannel {
             try {
                 input.close();
             } catch (IOException ignored) {
-                // Nothing useful can be done while formatting an error message.
+                // 格式化原始错误时无法再安全处理关闭失败。Nothing useful remains to do while formatting an error.
             }
         }
     }

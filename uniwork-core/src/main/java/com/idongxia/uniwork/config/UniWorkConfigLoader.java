@@ -13,7 +13,10 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Classpath configuration loader used by framework-neutral Java applications. */
+/**
+ * 供传统 Java Web 等框架无关应用使用的 classpath 配置加载器。
+ * Classpath configuration loader for framework-neutral applications such as traditional Java Web projects.
+ */
 public final class UniWorkConfigLoader {
 
     private static final String[] DEFAULT_RESOURCES = {
@@ -25,6 +28,7 @@ public final class UniWorkConfigLoader {
     private UniWorkConfigLoader() {
     }
 
+    /** 从默认文件名中按顺序查找并加载配置。Finds and loads configuration from the default resource names. */
     public static UniWorkConfig load(ClassLoader classLoader) {
         ClassLoader effectiveClassLoader = effectiveClassLoader(classLoader);
         for (String resource : DEFAULT_RESOURCES) {
@@ -36,6 +40,7 @@ public final class UniWorkConfigLoader {
                 "未找到 UniWork 配置文件，请在 classpath 中添加 uniwork.yml、uniwork.yaml 或 uniwork.properties");
     }
 
+    /** 从指定 classpath 文件加载配置。Loads configuration from a named classpath resource. */
     public static UniWorkConfig load(String resourceName, ClassLoader classLoader) {
         if (resourceName == null || resourceName.trim().isEmpty()) {
             throw new IllegalArgumentException("resourceName must not be blank");
@@ -64,7 +69,7 @@ public final class UniWorkConfigLoader {
             try {
                 input.close();
             } catch (IOException ignored) {
-                // The original parsing error, if any, is more useful to callers.
+                // 优先保留原始解析异常，它比关闭流失败更有排查价值。Preserve the more useful parsing error.
             }
         }
     }

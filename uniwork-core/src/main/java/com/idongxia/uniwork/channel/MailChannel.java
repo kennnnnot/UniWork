@@ -1,5 +1,5 @@
 package com.idongxia.uniwork.channel;
 
-/** Email delivery channel. */
+/** 邮件发送渠道。Email delivery channel. */
 public interface MailChannel extends UniWorkChannel {
 }

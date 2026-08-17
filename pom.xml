@@ -39,6 +39,11 @@
     <modules>
         <module>uniwork-bom</module>
         <module>uniwork-core</module>
+        <module>uniwork-platform-support</module>
+        <module>uniwork-wecom</module>
+        <module>uniwork-dingtalk</module>
+        <module>uniwork-feishu</module>
+        <module>uniwork-all</module>
         <module>uniwork-example-hospital-oa</module>
     </modules>
 
@@ -51,6 +56,7 @@
 
         <junit.version>5.10.2</junit.version>
         <snakeyaml.version>2.2</snakeyaml.version>
+        <jackson.version>2.21.2</jackson.version>
 
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <maven.enforcer.plugin.version>3.4.1</maven.enforcer.plugin.version>
@@ -66,9 +72,41 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.idongxia.uniwork</groupId>
+                <artifactId>uniwork-platform-support</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.idongxia.uniwork</groupId>
+                <artifactId>uniwork-wecom</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.idongxia.uniwork</groupId>
+                <artifactId>uniwork-dingtalk</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.idongxia.uniwork</groupId>
+                <artifactId>uniwork-feishu</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.idongxia.uniwork</groupId>
+                <artifactId>uniwork-all</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>

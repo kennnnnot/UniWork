@@ -19,8 +19,8 @@ import java.util.ServiceLoader;
 import java.util.Set;
 
 /**
- * Main UniWork facade. It loads configured channel providers from the
- * classpath and exposes short, type-safe accessors.
+ * UniWork 主入口：从 classpath 发现已配置渠道，并提供简短、类型安全的调用方法。
+ * Main facade that discovers configured channels from the classpath and exposes short, type-safe accessors.
  */
 public final class UniWork implements AutoCloseable {
 
@@ -31,16 +31,33 @@ public final class UniWork implements AutoCloseable {
                 new LinkedHashMap<Class<? extends UniWorkChannel>, UniWorkChannel>(channels));
     }
 
+    /**
+     * 从默认的 {@code uniwork.yml}、{@code uniwork.yaml} 或 {@code uniwork.properties} 加载。
+     * Loads from the default {@code uniwork.yml}, {@code uniwork.yaml}, or {@code uniwork.properties} resource.
+     *
+     * @return 已配置的 UniWork 实例；configured UniWork instance
+     */
     public static UniWork load() {
         return load(Thread.currentThread().getContextClassLoader());
     }
 
+    /**
+     * 使用指定类加载器读取默认配置并发现扩展。
+     * Uses the supplied class loader to read the default configuration and discover extensions.
+     */
     public static UniWork load(ClassLoader classLoader) {
         ClassLoader effectiveClassLoader = effectiveClassLoader(classLoader);
         UniWorkConfig config = UniWorkConfigLoader.load(effectiveClassLoader);
         return create(config, loadProviders(effectiveClassLoader));
     }
 
+    /**
+     * 从指定的 classpath 配置文件加载。
+     * Loads from a named classpath configuration resource.
+     *
+     * @param resourceName classpath 配置文件名；classpath resource name
+     * @return 已配置的 UniWork 实例；configured UniWork instance
+     */
     public static UniWork load(String resourceName) {
         ClassLoader classLoader = effectiveClassLoader(
                 Thread.currentThread().getContextClassLoader());
@@ -48,6 +65,10 @@ public final class UniWork implements AutoCloseable {
         return create(config, loadProviders(classLoader));
     }
 
+    /**
+     * 使用内存配置和明确提供的 Provider 创建实例，适合框架集成与测试。
+     * Creates an instance from in-memory configuration and explicit providers for integrations and tests.
+     */
     public static UniWork create(
             UniWorkConfig config,
             Iterable<UniWorkChannelProvider<?>> providers) {
@@ -69,26 +90,35 @@ public final class UniWork implements AutoCloseable {
         return new UniWork(channels);
     }
 
+    /** 返回企业微信渠道。Returns the configured WeCom channel. */
     public WeComChannel wecom() {
         return requiredChannel(WeComChannel.class, "企业微信未配置，请检查 uniwork.wecom 配置");
     }
 
+    /** 返回钉钉渠道。Returns the configured DingTalk channel. */
     public DingTalkChannel dingtalk() {
         return requiredChannel(DingTalkChannel.class, "钉钉未配置，请检查 uniwork.dingtalk 配置");
     }
 
+    /** 返回飞书渠道。Returns the configured Feishu channel. */
     public FeishuChannel feishu() {
         return requiredChannel(FeishuChannel.class, "飞书未配置，请检查 uniwork.feishu 配置");
     }
 
+    /** 返回邮箱渠道。Returns the configured email channel. */
     public MailChannel mail() {
         return requiredChannel(MailChannel.class, "邮箱未配置，请检查 uniwork.mail 配置");
     }
 
+    /** 返回短信渠道。Returns the configured SMS channel. */
     public SmsChannel sms() {
         return requiredChannel(SmsChannel.class, "短信未配置，请检查 uniwork.sms 配置");
     }
 
+    /**
+     * 按自定义渠道接口类型返回扩展，不使用字符串别名。
+     * Returns a custom extension by its channel interface type without string aliases.
+     */
     public <T extends UniWorkChannel> T platform(Class<T> channelType) {
         if (channelType == null) {
             throw new IllegalArgumentException("channelType must not be null");
@@ -98,10 +128,12 @@ public final class UniWork implements AutoCloseable {
                 "UniWork 平台未配置：" + channelType.getName());
     }
 
+    /** 判断某个渠道接口是否已经配置并加载。Checks whether a channel type is configured and loaded. */
     public boolean hasPlatform(Class<? extends UniWorkChannel> channelType) {
         return channelType != null && channels.containsKey(channelType);
     }
 
+    /** 关闭所有已加载渠道并释放资源。Closes all loaded channels and releases resources. */
     @Override
     public void close() {
         Set<UniWorkChannel> closed = Collections.newSetFromMap(
@@ -167,8 +199,8 @@ public final class UniWork implements AutoCloseable {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static Iterable<UniWorkChannelProvider<?>> loadProviders(ClassLoader classLoader) {
-        // ServiceLoader accepts only the raw provider class because Java erases T.
-        // Keep the unavoidable bridge here so the public extension API stays type-safe.
+        // Java 泛型擦除后 ServiceLoader 只能接收原始 Provider 类型，因此把不可避免的转换限制在此处。
+        // ServiceLoader accepts only the raw provider class after erasure; keep the bridge here.
         return (Iterable) ServiceLoader.load(UniWorkChannelProvider.class, classLoader);
     }
 

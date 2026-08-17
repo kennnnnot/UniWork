@@ -1,0 +1,12 @@
+uniwork:
+  wecom:
+    corp-id: ww-test
+    agent-id: 1000001
+    secret: test-secret
+  dingtalk:
+    client-id: ding-test
+    client-secret: test-secret
+    agent-id: 2000001
+  feishu:
+    app-id: cli-test
+    app-secret: test-secret

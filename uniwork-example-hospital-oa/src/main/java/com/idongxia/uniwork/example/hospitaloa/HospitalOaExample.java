@@ -2,7 +2,7 @@ package com.idongxia.uniwork.example.hospitaloa;
 
 import com.idongxia.uniwork.UniWork;
 
-/** Minimal Java 8 usage without Spring. */
+/** 不依赖 Spring 的最小 Java 8 调用示例。Minimal Java 8 usage without Spring. */
 public final class HospitalOaExample {
 
     private HospitalOaExample() {

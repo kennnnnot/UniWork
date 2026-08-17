@@ -3,7 +3,7 @@ package com.idongxia.uniwork.example.hospitaloa;
 import com.idongxia.uniwork.config.UniWorkConfig;
 import com.idongxia.uniwork.spi.UniWorkChannelProvider;
 
-/** Makes the custom channel discoverable through Java ServiceLoader. */
+/** 让医院 OA 渠道可以被 Java ServiceLoader 自动发现。Makes the hospital OA channel discoverable. */
 public final class HospitalOaChannelProvider
         implements UniWorkChannelProvider<HospitalOaChannel> {
 

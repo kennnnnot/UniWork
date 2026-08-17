@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.idongxia.uniwork</groupId>
+        <artifactId>uniwork-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>uniwork-all</artifactId>
+    <name>UniWork All Platforms</name>
+    <description>One dependency that enables WeCom, DingTalk, and Feishu adapters.</description>
+    <dependencies>
+        <dependency>
+            <groupId>com.idongxia.uniwork</groupId>
+            <artifactId>uniwork-wecom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.idongxia.uniwork</groupId>
+            <artifactId>uniwork-dingtalk</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.idongxia.uniwork</groupId>
+            <artifactId>uniwork-feishu</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
