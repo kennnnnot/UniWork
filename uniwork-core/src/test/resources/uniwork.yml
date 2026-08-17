@@ -1,0 +1,3 @@
+uniwork:
+  testing:
+    prefix: ${UNIWORK_TEST_PREFIX:yaml}

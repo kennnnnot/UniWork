@@ -1,0 +1,8 @@
+uniwork:
+  hospital-oa:
+    endpoint: http://127.0.0.1:8080/api/messages
+    app-id: purchase-system
+    secret: ${HOSPITAL_OA_SECRET}
+    default-title: 系统通知
+    connect-timeout-millis: 3000
+    read-timeout-millis: 5000

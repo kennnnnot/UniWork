@@ -1,0 +1,5 @@
+uniwork:
+  hospital-oa:
+    endpoint: http://127.0.0.1:8080/api/messages
+    app-id: test-app
+    secret: test-secret
