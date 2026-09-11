@@ -17,7 +17,50 @@ UniWork 是面向中国大陆企业应用的统一 Java 通信 SDK。它用一�
 - Java `ServiceLoader` 类型安全扩展，不使用字符串平台别名
 - 中文为主、英文补充的双语 JavaDoc
 
-## 最简单的 Maven 依赖
+## 单个 JAR 接入传统 Java Web 项目
+
+构建完整 JAR：
+
+```bash
+./mvnw clean verify
+```
+
+产物为 `uniwork-all/target/uniwork-all-0.1.0-SNAPSHOT-standalone.jar`，包含 UniWork 核心、企业微信、钉钉、飞书及全部运行依赖。目标项目使用 Java 8 或更高版本，无需 Maven，也无需额外安装 Jackson、SnakeYAML。
+
+1. 将这个 `-standalone.jar` 复制到项目的 `WEB-INF/lib`，并确保 IDE 编译路径包含它。
+2. 复制 [示例配置](examples/uniwork.yml.example) 到业务项目资源目录并改名为 `uniwork.yml`，删除不用的平台配置段，填写所用平台的参数；部署后应位于 `WEB-INF/classes/uniwork.yml`。
+3. 应用启动时创建一个 `UniWork` 实例，业务调用时复用，应用关闭时调用 `close()`。
+
+例如只接入企业微信时，配置内容为：
+
+```yaml
+uniwork:
+  wecom:
+    corp-id: ${WECOM_CORP_ID}
+    agent-id: ${WECOM_AGENT_ID}
+    secret: ${WECOM_SECRET}
+```
+
+设置好这三个环境变量后，调用：
+
+```java
+import com.idongxia.uniwork.UniWork;
+
+UniWork uniWork = UniWork.load(); // 在应用启动时执行一次
+uniWork.wecom().sendContent(userId, "采购项目等待审批");
+uniWork.wecom().sendCard(userId, "采购审批", "项目等待处理", detailUrl);
+```
+
+已有 Spring XML 的项目也可以直接注册单例 Bean：
+
+```xml
+<bean id="uniWork" class="com.idongxia.uniwork.UniWork"
+      factory-method="load" destroy-method="close"/>
+```
+
+完整 JAR 内的 Jackson、SnakeYAML 使用独立包名，避免与业务项目自带的版本争用同名类。使用完整 JAR 时，不要再同时放入其他 `uniwork-*.jar` 模块包。构建目录中不带 `-standalone` 的 `uniwork-all` JAR 仅用于 Maven 聚合依赖，不能单独复制使用。
+
+## Maven 项目接入
 
 同时使用企业微信、钉钉和飞书时，只需引入：
 
@@ -39,7 +82,13 @@ UniWork 是面向中国大陆企业应用的统一 Java 通信 SDK。它用一�
 
 ## 一份配置完成三平台接入
 
-在 classpath 中建立 `uniwork.yml`：
+仓库提供可直接复制的 [uniwork.yml.example](examples/uniwork.yml.example)，包含三平台必填参数及常用可选项。
+
+将它复制到**使用 UniWork 的业务项目**并改名为 `uniwork.yml`：传统 Java Web 项目放在 `res` 等实际配置的资源目录，Maven 项目放在 `src/main/resources`。运行时文件必须位于 classpath 根目录；Java Web 部署后对应 `WEB-INF/classes/uniwork.yml`。示例保留在仓库的 `examples` 目录，不会作为默认配置打入 SDK JAR。
+
+只保留要使用的平台配置段，删除不用的平台及其子项。将 `${NAME}` 对应的环境变量或 Java 系统属性设置好，也可以将占位符替换为实际字符串值；保留了未填写的平台配置段，会在加载时报告缺少配置值。仅发送消息时不需要 `redirect-uri`，使用授权登录时再填写回调地址。
+
+三平台配置示例：
 
 ```yaml
 uniwork:
@@ -155,7 +204,7 @@ uniWork.platform(HospitalOaChannel.class)
 - `uniwork-wecom`：企业微信适配
 - `uniwork-dingtalk`：钉钉适配
 - `uniwork-feishu`：飞书适配
-- `uniwork-all`：三平台聚合依赖
+- `uniwork-all`：三平台聚合依赖，同时构建可直接复制使用的完整 JAR
 - `uniwork-bom`：版本统一管理
 - `uniwork-example-hospital-oa`：自定义平台改造案例
 
@@ -166,6 +215,8 @@ uniWork.platform(HospitalOaChannel.class)
 ```
 
 构建会运行 Java 8 API 检查。GitHub Actions 使用 Java 8、17、21 三个版本验证。
+
+`verify` 还会检查完整 JAR 中所有类的 Java 8 字节码兼容性，并只使用这个 JAR 编译示例、在隔离的类加载器中加载外部 YAML 配置，通过本地模拟服务验证三平台文本和卡片发送。这会同时验证运行依赖和 `ServiceLoader` 注册是否完整打包。
 
 当前自动化测试使用本地模拟 HTTP 服务核对请求地址、鉴权头、JSON 报文、登录用户映射和令牌缓存；真实企业账号的权限、可见范围和后台配置仍需使用各平台测试应用联调。
 

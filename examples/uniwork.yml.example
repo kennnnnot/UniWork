@@ -1,0 +1,41 @@
+# 复制到业务项目的资源目录，并改名为 uniwork.yml。
+# Java Web 项目部署后应位于 WEB-INF/classes/uniwork.yml。
+# 只保留需要使用的平台配置段；删除不用的平台及其全部子项。
+# ${NAME} 从同名环境变量或 Java 系统属性读取，也可替换成实际配置值。
+
+uniwork:
+  wecom:
+    # 企业 ID、应用 AgentId、应用 Secret。
+    corp-id: "${WECOM_CORP_ID}"
+    agent-id: "${WECOM_AGENT_ID}"
+    secret: "${WECOM_SECRET}"
+
+    # 使用授权登录时填写并取消注释；仅发送消息时不需要。
+    # redirect-uri: "https://app.example.com/login/wecom/callback"
+
+    # 通用可选项，钉钉和飞书也支持在各自配置段下设置。
+    # connect-timeout-millis: 3000
+    # read-timeout-millis: 5000
+    # card-button-text: "查看详情"
+
+  dingtalk:
+    # 应用 Client ID、Client Secret、AgentId。
+    # client-id 和 client-secret 也兼容旧名称 app-key 和 app-secret。
+    client-id: "${DINGTALK_CLIENT_ID}"
+    client-secret: "${DINGTALK_CLIENT_SECRET}"
+    agent-id: "${DINGTALK_AGENT_ID}"
+
+    # 使用授权登录时填写并取消注释。
+    # redirect-uri: "https://app.example.com/login/dingtalk/callback"
+
+  feishu:
+    # 应用 App ID、App Secret。
+    app-id: "${FEISHU_APP_ID}"
+    app-secret: "${FEISHU_APP_SECRET}"
+
+    # 使用授权登录时填写并取消注释。
+    # redirect-uri: "https://app.example.com/login/feishu/callback"
+
+    # 消息接收人及通讯录查询默认使用 user_id，可按实际传入的 ID 类型调整。
+    # receive-id-type: "user_id"
+    # user-id-type: "user_id"
