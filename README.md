@@ -51,7 +51,7 @@ uniWork.wecom().sendContent(userId, "采购项目等待审批");
 uniWork.wecom().sendCard(userId, "采购审批", "项目等待处理", detailUrl);
 ```
 
-已有 Spring XML 的项目也可以直接注册单例 Bean：
+已有 Spring XML 的项目也可以直接注册单例 Bean，完整步骤见 [Spring MVC 项目接入](#spring-mvc-项目接入)：
 
 ```xml
 <bean id="uniWork" class="com.idongxia.uniwork.UniWork"
@@ -114,13 +114,82 @@ uniwork:
 
 平台后台还需要完成对应授权：企业微信要保证自建应用的可见范围和通讯录权限；钉钉要开通工作通知以及登录所需的个人权限；飞书要启用机器人，并开通 `im:message:send_as_bot` 和所需通讯录权限。SDK 无法绕过平台后台的权限和数据可见范围。
 
+## Spring MVC 项目接入
+
+以下以企业微信为例。
+
+### 1. 添加 `uniwork.yml`
+
+放到项目的资源目录，例如 `res`。部署后应位于 `WEB-INF/classes/uniwork.yml`。
+
+```yaml
+uniwork:
+  wecom:
+    corp-id: "你的企业ID"
+    agent-id: "你的应用AgentId"
+    secret: "你的应用Secret"
+```
+
+把示例值换成实际参数。只发送消息时，这三个参数即可；使用登录功能时再配置 `redirect-uri`。
+
+### 2. 在 Spring 配置中注册实例
+
+在项目启动时加载的 `applicationContext.xml` 中加入：
+
+```xml
+<bean id="uniWork"
+      class="com.idongxia.uniwork.UniWork"
+      factory-method="load"
+      destroy-method="close"/>
+```
+
+Spring 会创建一个单例，业务代码复用它，应用关闭时自动释放资源。
+
+### 3. 在现有 Service 中注入并调用
+
+先导入：
+
+```java
+import com.idongxia.uniwork.UniWork;
+import javax.annotation.Resource;
+```
+
+然后在 Service 类中加入：
+
+```java
+@Resource(name = "uniWork")
+private UniWork uniWork;
+
+public void sendApprovalMessage(String userId) {
+    uniWork.wecom().sendContent(
+        userId,
+        "您有一个采购项目等待审批"
+    );
+}
+
+public void sendApprovalCard(String userId, String detailUrl) {
+    uniWork.wecom().sendCard(
+        userId,
+        "采购审批",
+        "您有一个采购项目等待处理",
+        detailUrl
+    );
+}
+```
+
+这里的 `userId` 要传企业微信对应的用户 ID，业务系统自己的用户编号需要先转换成对应的平台用户 ID。
+
 ## 业务调用
 
-传统 Java Web 项目启动时加载一次：
+如果项目没有使用 Spring，就在应用启动时执行：
 
 ```java
 UniWork uniWork = UniWork.load();
 ```
+
+保存并复用这个实例，应用关闭时调用 `uniWork.close()`。
+
+钉钉、飞书的调用方式相同，分别使用 `.dingtalk()`、`.feishu()`，并添加对应配置。
 
 发送文本：
 
